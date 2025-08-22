@@ -4,86 +4,162 @@
 ## Ejercicio Introducción al paralelismo - Hilos - Caso BlackListSearch
 
 
-### Dependencias:
-####   Lecturas:
-*  [Threads in Java](http://beginnersbook.com/2013/03/java-threads/)  (Hasta 'Ending Threads')
-*  [Threads vs Processes]( http://cs-fundamentals.com/tech-interview/java/differences-between-thread-and-process-in-java.php)
+## 📌 Parte 1: CountThread y CountThreadsMain
+ 1.	Implementamos la clase **CountThread.java**, lo principal es guardar los dos atributos **A** y **B** , ellos representan el rango de números
+      	 y el método run() para que el hilo imprima los números en el rango indicado
 
-### Descripción
-  Este ejercicio contiene una introducción a la programación con hilos en Java, además de la aplicación a un caso concreto.
+<p align="center">
+<img src="https://github.com/user-attachments/assets/ca8dd249-2c53-4ed1-b355-7a4cebb2bfad" width="400" />
+</p>
+
+2.	Para **CountThreadsMain.java**, creamos los 3 hilos con los rangos especificados en el taller, primero con start() para probar que pasaría y luego con run()
+
+<p align="center">
+<img width="601" height="402" alt="image" src="https://github.com/user-attachments/assets/8c412b39-78e2-48ef-94ca-c8352294f41f" />
+</p>
+
+Con la salida de start() podemos ver como los números salen, pero no en un orden en especifico (mezclados), en cambio con run() vemos como salen mas ordenados:
+
+- **Start()**
+
+<p align="center">
+<img width="480" height="238" alt="image" src="https://github.com/user-attachments/assets/e16eef9a-f355-46b9-97f2-17cb32419e1b" />
+</p>
+<p align="center">
+<img width="37" height="259" alt="image" src="https://github.com/user-attachments/assets/e05323e6-edf1-4702-8f95-50e2a22ad2c5" />
+</p>
+
+- **Run()**
+
+<p align="center">
+<img width="503" height="245" alt="image" src="https://github.com/user-attachments/assets/27f626f7-8476-4699-87d3-2a1549ee6147" />
+</p>
+<p align="center">
+<img width="61" height="404" alt="image" src="https://github.com/user-attachments/assets/87aa4e07-cdd0-4176-bcf4-023de6c205ea" />
+</p>
+
+## 📌 Parte 2: Búsqueda en Listas Negras
+1.	Para este punto se implementó la búsqueda de una dirección IP dentro de múltiples listas negras, como se nos pedía se definió una nueva clase SearchThread la cual se encarga de revisar en un rango en especifico de listas, en el main se pusieron los hilos los cuales trabajan en paralelo para todas las listas, al final el programa tendría que decir si la dirección IP es confiable o no también junto con las listas en donde fueron encontradas
+
+<p align="center">
+<img width="827" height="64" alt="image" src="https://github.com/user-attachments/assets/f1d791c2-1106-48f8-ba6f-060f23469305" />
+</p>
+
+- La idea con **SearchThread.java**, revisa dentro de un rango de listas negras de inicio a final si una dirección IP aparece múltiples veces para considerarse no confiable, los hilos 		trabajan en paralelo verificando partes de los servidores y guarda las coincidencias haciéndolo más rápido con varios hilos
+
+<p align="center">
+<img width="680" height="494" alt="image" src="https://github.com/user-attachments/assets/3d6cee6b-9e7e-4dd6-be7b-9a44a783054d" />
+</p>
+
+2. En esta parte se modificó el método checkHost para recibir un parámetro N el cual seria el numero de hilos en los que se divide la búsqueda de la dirección IP en las listas negras, la idea es que cada hilo se encargue de revisar partes diferentes
+
+<p align="center">
+<img width="655" height="301" alt="image" src="https://github.com/user-attachments/assets/e78a5fed-4e00-4105-9a09-b680618e8aec" />
+</p>
+
+- Para comprobar miramos con la IP confiable 212.24.24.55 con 10 hilos
+
+<p align="center">
+<img width="450" height="52" alt="image" src="https://github.com/user-attachments/assets/2d42b5f2-ae74-4cf6-b126-de89dbc8ce8e" />
+</p>
+
+- Ahora con la IP no confiable 202.24.34.55 con 8 hilos
+
+<p align="center">
+<img width="464" height="65" alt="image" src="https://github.com/user-attachments/assets/929e7696-0615-44c1-938f-0a883cca77a6" />
+</p>
+
+## 📌 Parte 3: Experimentos con distintos hilos
+Se hicieron pruebas con diferentes hilos para poder deducir o identificar el comportamiento y tiempos de respuesta, se implemento una nueva clase que se llamo **PerformanceEvaluator.java** la cual sirvio como clase de prueba, se implemento de la siguiente manera:
+
+<p align="center">
+<img width="734" height="539" alt="image" src="https://github.com/user-attachments/assets/bc4783f5-02b4-469f-a644-601f71da3d7e" />
+</p>
+
+- Primero fija el valor de **nThreads** (este se cambia a medida que queremos aumentar o disminuir los hilos), luego registra el tiempo de inicio, ejecuta la validación en paralelo con la clase HostBlackListsValidator y finalmente calcula el tiempo total que tomó la ejecución. Al imprimir la IP evaluada, el número de hilos, el tiempo consumido y el total de ocurrencias encontradas, se puede comparar fácilmente cómo varía el desempeño al aumentar o disminuir los hilos, encontramos lo siguiente:
+
+- **1 hilo**:
+<p align="center">
+<img width="380" height="95" alt="image" src="https://github.com/user-attachments/assets/ff19e45b-540d-4807-a218-c24ae87fb80e" />
+</p>
+
+<p align="center">
+<img width="694" height="149" alt="image" src="https://github.com/user-attachments/assets/7b19e881-8923-4364-a5fd-0ba19209f975" />
+</p>
+ 
+- **Para este caso hacemos uso de int nThreads =Runtime.getRuntime().availableProcessors(), esta nos devuelve el número de procesadores lógicos que tiene la CPU, en este caso fueron 4**:
+<p align="center">
+<img width="571" height="89" alt="image" src="https://github.com/user-attachments/assets/98c1310e-a36e-4472-bd6d-3e2301336b6d" />
+</p>
+
+<p align="center">
+<img width="517" height="138" alt="image" src="https://github.com/user-attachments/assets/46fe0300-0475-42e2-8b33-f605c049bd25" />
+</p>
+  
+- **Para este punto es el mismo ejercicio, pero la idea es dar como resultado el doble, por eso lo que hacemos es multiplicar por 2 y obtenemos 8 hilos en este caso:**
+<p align="center">
+<img width="533" height="89" alt="image" src="https://github.com/user-attachments/assets/f753593e-ceb7-4b5a-8aea-f8d322a5059e" />
+</p>
+
+<p align="center">
+<img width="522" height="130" alt="image" src="https://github.com/user-attachments/assets/435c2ca5-6d7d-4d4a-85b8-2f8322ac508f" />
+</p>
+  
+- **50 hilos**
+
+<p align="center">
+<img width="471" height="88" alt="image" src="https://github.com/user-attachments/assets/e32159be-9ce9-497a-902a-7f8a0eafcce8" />
+</p>
+
+<p align="center">
+<img width="592" height="148" alt="image" src="https://github.com/user-attachments/assets/79e3b857-8d43-4632-b731-a50fab3f0652" />
+</p>
+
+- **100 hilos**
+<p align="center">
+<img width="389" height="98" alt="image" src="https://github.com/user-attachments/assets/eb1d3cac-efd7-42c6-a6d4-13f80002e26d" />
+</p>
+
+<p align="center">
+<img width="484" height="136" alt="image" src="https://github.com/user-attachments/assets/4cbf171b-1c3c-422b-8036-cb97e584f070" />
+</p>
   
 
-**Parte I - Introducción a Hilos en Java**
+📊  **Resultados:**
 
-1. De acuerdo con lo revisado en las lecturas, complete las clases CountThread, para que las mismas definan el ciclo de vida de un hilo que imprima por pantalla los números entre A y B.
-2. Complete el método __main__ de la clase CountMainThreads para que:
-	1. Cree 3 hilos de tipo CountThread, asignándole al primero el intervalo [0..99], al segundo [99..199], y al tercero [200..299].
-	2. Inicie los tres hilos con 'start()'.
-	3. Ejecute y revise la salida por pantalla. 
-	4. Cambie el incio con 'start()' por 'run()'. Cómo cambia la salida?, por qué?.
+- Nos encontramos con distintos tiempos dependiendo de la cantidad de hilos que ingresamos, se hizo una tabla y luego una grafica de Hilos VS Tiempo para analizar los resultados:
 
-**Parte II - Ejercicio Black List Search**
+<p align="center">
+<img width="197" height="132" alt="image" src="https://github.com/user-attachments/assets/c7beac43-a9ac-48e1-bc58-6f7e6f6df1fe" />
+</p>
 
+Con un solo hilo la ejecución fue secuencial, saturando un único procesador lógico y generando un alto tiempo de procesamiento. Al aumentar el número de hilos, las tareas se distribuyeron en paralelo entre los núcleos disponibles, lo que incrementó el aprovechamiento del CPU y redujo significativamente el tiempo. Con 50 y 100 hilos la sobrecarga de creación y gestión de hilos aún se mantiene baja ya que trabajan de mejor manera
 
-Para un software de vigilancia automática de seguridad informática se está desarrollando un componente encargado de validar las direcciones IP en varios miles de listas negras (de host maliciosos) conocidas, y reportar aquellas que existan en al menos cinco de dichas listas. 
+<p align="center">
+<img width="679" height="398" alt="image" src="https://github.com/user-attachments/assets/929152a2-88af-4851-9dec-6aa14b68cf17" />
+</p>
 
-Dicho componente está diseñado de acuerdo con el siguiente diagrama, donde:
+## 📌 Parte 4: Ley de Amdahl
 
-- HostBlackListsDataSourceFacade es una clase que ofrece una 'fachada' para realizar consultas en cualquiera de las N listas negras registradas (método 'isInBlacklistServer'), y que permite también hacer un reporte a una base de datos local de cuando una dirección IP se considera peligrosa. Esta clase NO ES MODIFICABLE, pero se sabe que es 'Thread-Safe'.
+- Expliación de la ley de Amdahl:
+<p align="center">
+<img width="502" height="193" alt="image" src="https://github.com/user-attachments/assets/da816dcf-5718-4598-b158-9be5dedf9c26" />
+</p>
+  
 
-- HostBlackListsValidator es una clase que ofrece el método 'checkHost', el cual, a través de la clase 'HostBlackListDataSourceFacade', valida en cada una de las listas negras un host determinado. En dicho método está considerada la política de que al encontrarse un HOST en al menos cinco listas negras, el mismo será registrado como 'no confiable', o como 'confiable' en caso contrario. Adicionalmente, retornará la lista de los números de las 'listas negras' en donde se encontró registrado el HOST.
+1.	Según la ley de Amdahl, aunque aumentemos mucho el número de hilos, el desempeño siempre está limitado por la parte del algoritmo que no se puede paralelizar. Por eso, al pasar de 200 a 500 hilos la mejora es mínima, con tantos hilos se generan sobrecostos de coordinación y cambios de contexto que hacen que no valga la pena
 
-![](img/Model.png)
+2.	Cuando usamos tantos hilos como núcleos reales de la CPU, el rendimiento es casi óptimo porque cada hilo puede ejecutarse sin competencia. Si duplicamos la cantidad de hilos, el sistema operativo debe repartir el tiempo de los núcleos entre más procesos, lo que introduce esperas y sobrecarga. Por eso, usar el doble de hilos no significa el doble de rendimiento, sino que incluso puede reducir la eficiencia
 
-Al usarse el módulo, la evidencia de que se hizo el registro como 'confiable' o 'no confiable' se dá por lo mensajes de LOGs:
-
-INFO: HOST 205.24.34.55 Reported as trustworthy
-
-INFO: HOST 205.24.34.55 Reported as NOT trustworthy
-
-
-Al programa de prueba provisto (Main), le toma sólo algunos segundos análizar y reportar la dirección provista (200.24.34.55), ya que la misma está registrada más de cinco veces en los primeros servidores, por lo que no requiere recorrerlos todos. Sin embargo, hacer la búsqueda en casos donde NO hay reportes, o donde los mismos están dispersos en las miles de listas negras, toma bastante tiempo.
-
-Éste, como cualquier método de búsqueda, puede verse como un problema [vergonzosamente paralelo](https://en.wikipedia.org/wiki/Embarrassingly_parallel), ya que no existen dependencias entre una partición del problema y otra.
-
-Para 'refactorizar' este código, y hacer que explote la capacidad multi-núcleo de la CPU del equipo, realice lo siguiente:
-
-1. Cree una clase de tipo Thread que represente el ciclo de vida de un hilo que haga la búsqueda de un segmento del conjunto de servidores disponibles. Agregue a dicha clase un método que permita 'preguntarle' a las instancias del mismo (los hilos) cuantas ocurrencias de servidores maliciosos ha encontrado o encontró.
-
-2. Agregue al método 'checkHost' un parámetro entero N, correspondiente al número de hilos entre los que se va a realizar la búsqueda (recuerde tener en cuenta si N es par o impar!). Modifique el código de este método para que divida el espacio de búsqueda entre las N partes indicadas, y paralelice la búsqueda a través de N hilos. Haga que dicha función espere hasta que los N hilos terminen de resolver su respectivo sub-problema, agregue las ocurrencias encontradas por cada hilo a la lista que retorna el método, y entonces calcule (sumando el total de ocurrencuas encontradas por cada hilo) si el número de ocurrencias es mayor o igual a _BLACK_LIST_ALARM_COUNT_. Si se da este caso, al final se DEBE reportar el host como confiable o no confiable, y mostrar el listado con los números de las listas negras respectivas. Para lograr este comportamiento de 'espera' revise el método [join](https://docs.oracle.com/javase/tutorial/essential/concurrency/join.html) del API de concurrencia de Java. Tenga también en cuenta:
-
-	* Dentro del método checkHost Se debe mantener el LOG que informa, antes de retornar el resultado, el número de listas negras revisadas VS. el número de listas negras total (línea 60). Se debe garantizar que dicha información sea verídica bajo el nuevo esquema de procesamiento en paralelo planteado.
-
-	* Se sabe que el HOST 202.24.34.55 está reportado en listas negras de una forma más dispersa, y que el host 212.24.24.55 NO está en ninguna lista negra.
+3.	Si en lugar de 100 hilos en una sola máquina distribuimos el trabajo en 100 máquinas con 1 hilo cada una, la ley de Amdahl sigue aplicando, pero además aparece el tiempo de comunicación y coordinación entre equipos. Solo conviene distribuir si el problema es muy paralelizable y requiere más memoria o recursos de los que una sola máquina puede ofrecer
 
 
-**Parte II.I Para discutir la próxima clase (NO para implementar aún)**
 
-La estrategia de paralelismo antes implementada es ineficiente en ciertos casos, pues la búsqueda se sigue realizando aún cuando los N hilos (en su conjunto) ya hayan encontrado el número mínimo de ocurrencias requeridas para reportar al servidor como malicioso. Cómo se podría modificar la implementación para minimizar el número de consultas en estos casos?, qué elemento nuevo traería esto al problema?
 
-**Parte III - Evaluación de Desempeño**
 
-A partir de lo anterior, implemente la siguiente secuencia de experimentos para realizar las validación de direcciones IP dispersas (por ejemplo 202.24.34.55), tomando los tiempos de ejecución de los mismos (asegúrese de hacerlos en la misma máquina):
 
-1. Un solo hilo.
-2. Tantos hilos como núcleos de procesamiento (haga que el programa determine esto haciendo uso del [API Runtime](https://docs.oracle.com/javase/7/docs/api/java/lang/Runtime.html)).
-3. Tantos hilos como el doble de núcleos de procesamiento.
-4. 50 hilos.
-5. 100 hilos.
 
-Al iniciar el programa ejecute el monitor jVisualVM, y a medida que corran las pruebas, revise y anote el consumo de CPU y de memoria en cada caso. ![](img/jvisualvm.png)
 
-Con lo anterior, y con los tiempos de ejecución dados, haga una gráfica de tiempo de solución vs. número de hilos. Analice y plantee hipótesis con su compañero para las siguientes preguntas (puede tener en cuenta lo reportado por jVisualVM):
-
-**Parte IV - Ejercicio Black List Search**
-
-1. Según la [ley de Amdahls](https://www.pugetsystems.com/labs/articles/Estimating-CPU-Performance-using-Amdahls-Law-619/#WhatisAmdahlsLaw?):
-
-	![](img/ahmdahls.png), donde _S(n)_ es el mejoramiento teórico del desempeño, _P_ la fracción paralelizable del algoritmo, y _n_ el número de hilos, a mayor _n_, mayor debería ser dicha mejora. Por qué el mejor desempeño no se logra con los 500 hilos?, cómo se compara este desempeño cuando se usan 200?. 
-
-2. Cómo se comporta la solución usando tantos hilos de procesamiento como núcleos comparado con el resultado de usar el doble de éste?.
-
-3. De acuerdo con lo anterior, si para este problema en lugar de 100 hilos en una sola CPU se pudiera usar 1 hilo en cada una de 100 máquinas hipotéticas, la ley de Amdahls se aplicaría mejor?. Si en lugar de esto se usaran c hilos en 100/c máquinas distribuidas (siendo c es el número de núcleos de dichas máquinas), se mejoraría?. Explique su respuesta.
 
 
 
