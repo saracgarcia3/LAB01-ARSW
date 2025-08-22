@@ -154,9 +154,9 @@ Con un solo hilo la ejecución fue secuencial, saturando un único procesador l�
 3.	Si en lugar de 100 hilos en una sola máquina distribuimos el trabajo en 100 máquinas con 1 hilo cada una, la ley de Amdahl sigue aplicando, pero además aparece el tiempo de comunicación y coordinación entre equipos. Solo conviene distribuir si el problema es muy paralelizable y requiere más memoria o recursos de los que una sola máquina puede ofrecer
 
 
+## ✅ Conclusiones  
 
-
-
+El paralelismo en Java mejora el rendimiento al repartir las tareas entre varios núcleos, pero este aumento tiene un límite. Según la Ley de Amdahl, la fracción secuencial del programa restringe la aceleración máxima posible, sin importar cuántos hilos se utilicen. En la práctica, usar un número de hilos equivalente a los núcleos físicos ofrece el mejor balance entre eficiencia y velocidad, mientras que un exceso de hilos genera sobrecarga y puede reducir el desempeño. 
 
 
 
